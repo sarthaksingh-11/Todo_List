@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: white;
+            color: black;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            margin: 0;
+            min-height: 100vh;
+            padding-bottom: 60px;
+            overflow-x: hidden;
+            box-sizing: border-box;
+        }
+
+        body.dark-mode {
+            font-family: Arial, sans-serif;
+            background-color: #1d1e21;
+            color: white;
+        }
+
+        body.dark-mode li {
+            background: #1d1e21;
+            color: #ffffff;
+        }
+
+        h1 {
+            background: linear-gradient(to right, #248045, #2e9c56);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .dark-mode-button {
+            float: right;
+        }
+
+        #darkModeBtn {
+            background-image: url("./Assets/darkModeIcon.png");
+            background-color: transparent;
+            background-size: cover;
+            background-position: center;
+            border: none;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .todo-container, .completed-task-container {
+            text-align: center;
+            max-width: 1000px;
+            margin: auto;
+            padding: 20px;
+            background: #e3e5e8;
+            border-radius: 8px;
+            margin-bottom: 60px;
+            transition: all 0.3s ease;
+        }
+
+        input, button {
+            padding: 10px;
+            margin: 5px;
+            width: 70%;
+            border-radius: 4px;
+        }
+
+        input:focus {
+            border-color: #248045;
+            outline: none;
+            box-shadow: 0 0 5px rgba(36, 128, 69, 0.5);
+        }
+
+        button {
+            background: #248045;
+            color: white;
+            width: 100px;
+            border: none;
+            margin: auto;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            position: relative;
+            max-height: 80px;
+            overflow: hidden;
+            background: #fff;
+            margin: 5px;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-wrap: break-word;
+            transition: all 0.3s ease;
+        }
+
+        li button {
+            margin: 5px;
+            vertical-align: middle;
+            flex-shrink: 0;
+        }
+
+        .complete-btn {
+            background-size: cover;
+            background-position: center;
+            color: white;
+            width: 60px;
+            height: 60px;
+            margin-left: 30px;
+            vertical-align: middle;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .more-info-btn {
+            background: #42434a;
+            color: white;
+            width: 250px;
+            height: 60px;
+            margin: 10px;
+            border: none;
+            cursor: pointer;
+            white-space: normal;
+            overflow: hidden;
+            text-align: center;
+            word-wrap: break-word;
+        }
+
+        .delete-btn {
+            background: #d9363c;
+            color: white;
+            height: 60px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="dark-mode-button">
+        <button id="darkModeBtn"></button>
+    </div>
+
+    <div class="todo-container" id="todo-container">
+        <h1>To-Do List</h1>
+        <input type="text" id="taskInput" placeholder="Enter new task">
+        <button id="addBtn">Add Task</button>
+        <ul id="taskList"></ul>
+    </div>
+
+    <div class="completed-task-container" id="completed-task-container">
+        <h1>Completed Tasks</h1>
+        <ul id="completedTaskList"></ul>
+    </div>
+
+    <script>
+        const darkModeBtn = document.getElementById("darkModeBtn");
+        const addBtn = document.getElementById("addBtn");
+        const toDoContainer = document.getElementById("todo-container");
+        const completedTaskContainer = document.getElementById("completed-task-container");
+        const taskInput = document.getElementById("taskInput");
+        const taskList = document.getElementById("taskList");
+        const completedTaskList = document.getElementById("completedTaskList");
+
+        darkModeBtn.addEventListener("mouseover", function() {
+            darkModeBtn.style.transform = "scale(1.125)";
+        });
+
+        darkModeBtn.addEventListener("mouseout", function() {
+            darkModeBtn.style.transform = "scale(1)";
+        });
+
+        darkModeBtn.addEventListener('click', function () {
+            const darkMode = document.body.classList.toggle('dark-mode');
+            if(darkMode){
+                darkModeBtn.style.backgroundImage = 'url("./Assets/lightModeIcon.png")';
+                toDoContainer.style.backgroundColor = "#313338";
+                completedTaskContainer.style.backgroundColor = "#313338"; 
+            }
+            else{
+                darkModeBtn.style.backgroundImage = 'url("./Assets/darkModeIcon.png")';
+                toDoContainer.style.backgroundColor = "#f5f5f5";
+                completedTaskContainer.style.backgroundColor = "#f5f5f5";
+            }
+        });
+
+        addBtn.addEventListener("mouseover", function() {
+            addBtn.style.backgroundColor = "darkGreen";
+        });
+
+        addBtn.addEventListener("mouseout", function() {
+            addBtn.style.backgroundColor = "#4CAF50";
+        });
+
+        taskInput.addEventListener("keydown", function(event) {
+            if (event.key === "Enter") {
+                addBtn.click();
+            }
+        });
+
+        addBtn.addEventListener("click", function() {
+            const addedDateTime = new Date().toLocaleString();
+            const taskText = taskInput.value.trim();
+            if (taskText) {
+                const li = document.createElement("li");
+                li.textContent = taskText;
+
+                const completeBtn = document.createElement("button");
+                completeBtn.classList.add("complete-btn");
+                completeBtn.innerHTML = '<i class="fas fa-check"></i>';
+                completeBtn.addEventListener("click", function() {
+                    const completed = true;
+                    const completedDateTime = new Date().toLocaleString();
+                    taskList.removeChild(li);
+                    completedTaskList.append(li);
+                    completeBtn.remove();
+
+                    moreInfoBtn.addEventListener("mouseover", function() {
+                        moreInfoBtn.textContent = `Added: ${addedDateTime}\nCompleted: ${completedDateTime}`;
+                    });
+                });
+
+                completeBtn.addEventListener("mouseover", function() {
+                    completeBtn.style.transform = "scale(1.1)";
+                });
+                completeBtn.addEventListener("mouseout", function() {
+                    completeBtn.style.transform = "scale(1)";
+                });
+                
+                li.appendChild(completeBtn);
+
+                const moreInfoBtn = document.createElement("button");
+                moreInfoBtn.textContent = "More Info";
+                moreInfoBtn.classList.add("more-info-btn");
+                moreInfoBtn.addEventListener("mouseover", function() {
+                    moreInfoBtn.textContent = `Added: ${addedDateTime}`;
+                });
+                moreInfoBtn.addEventListener("mouseout", function() {
+                    moreInfoBtn.textContent = "More Info";
+                });
+
+                li.appendChild(moreInfoBtn);
+
+                const deleteBtn = document.createElement("button");
+                deleteBtn.textContent = "Delete";
+                deleteBtn.classList.add("delete-btn");
+                deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+                deleteBtn.addEventListener("click", function () {
+                    if (li.parentElement) {
+                        li.parentElement.removeChild(li);
+                    }
+                });
+                deleteBtn.addEventListener("mouseover", function () {
+                    deleteBtn.style.transform = "scale(1.1)";
+                });
+                deleteBtn.addEventListener("mouseout", function () {
+                    deleteBtn.style.transform = "scale(1)";
+                });
+
+                li.appendChild(deleteBtn);
+                taskList.appendChild(li);
+                taskInput.value = "";
+            } else {
+                alert("Please enter a task!");
+            }
+        });
+    </script>
+</body>
+</html>
