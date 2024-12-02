@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Do List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f3e7e9, #e3e5e9);
+            min-height: 100vh;
+            transition: background 0.3s, color 0.3s;
+        }
+        .todo-container {
+            max-width: 350px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+            transition: background 0.3s, color 0.3s;
+        }
+        input, button, textarea {
+            padding: 10px;
+            margin: 5px 0;
+            width: calc(100% - 22px);
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        button {
+            background: #6c9ee8;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background: #f9f9f9;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        li.completed {
+            background: #dcdcdc;
+            color: #888;
+        }
+        li strong {
+            display: block;
+        }
+        li p {
+            margin: 5px 0 0;
+            font-size: 0.9em;
+            color: #555;
+        }
+        li span {
+            margin-top: 5px;
+            font-size: 0.85em;
+            color: #888;
+        }
+        .delete-btn, .complete-btn {
+            background: red;
+            color: rgb(241, 229, 229);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            padding: 5px 10px;
+            margin-top: 5px;
+        }
+        .complete-btn {
+            background: #4caf50;
+        }
+        .completed .complete-btn {
+            background: #888;
+            cursor: not-allowed;
+        }
+        .dark-mode {
+            background: linear-gradient(135deg, #2e3a3f, #23292d);
+            color: #f4f4f4;
+        }
+        .dark-mode .todo-container {
+            background: #2c2c2c;
+            color: #f4f4f4;
+        }
+        .dark-mode li {
+            background: #444;
+        }
+        .dark-mode button {
+            background: #555;
+            color: white;
+        }
+        .dark-mode .delete-btn {
+            background: #b0403c;
+        }
+        .dark-mode-toggle {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #333;
+            transition: color 0.3s;
+        }
+        .dark-mode .dark-mode-toggle {
+            color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <div class="todo-container" id="todoContainer">
+        <button class="dark-mode-toggle" id="darkModeToggle">&#x1F319</button>
+        <h2>To Do List</h2>
+        <input type="text" id="taskInput" placeholder="Enter Title of Task">
+        <textarea id="taskDescription" placeholder="Enter the Description of the Task"></textarea>
+        <input type="datetime-local" id="taskDeadline" placeholder="Enter Deadline">
+        <button id="addBtn">Add Task</button>
+        <ul id="taskList"></ul>
+    </div>
+    <script>
+        const addBtn = document.getElementById("addBtn");
+        const taskInput = document.getElementById("taskInput");
+        const taskDescription = document.getElementById("taskDescription");
+        const taskDeadline = document.getElementById("taskDeadline");
+        const taskList = document.getElementById("taskList");
+        const darkModeToggle = document.getElementById("darkModeToggle");
+        const todoContainer = document.getElementById("todoContainer");
+        let isDarkMode = false;
+
+        addBtn.addEventListener("click", function () {
+            const taskText = taskInput.value.trim();
+            const taskDesc = taskDescription.value.trim();
+            const taskTime = taskDeadline.value;
+
+            if (taskText && taskDesc && taskTime) {
+                const li = document.createElement("li");
+
+                const taskTitle = document.createElement("strong");
+                taskTitle.textContent = taskText;
+                li.appendChild(taskTitle);
+
+                const description = document.createElement("p");
+                description.textContent = taskDesc;
+                li.appendChild(description);
+
+                const deadline = document.createElement("span");
+                deadline.textContent = `Deadline: ${new Date(taskTime).toLocaleString()}`;
+                li.appendChild(deadline);
+
+                const timeLeft = document.createElement("span");
+                timeLeft.className = "time-left";
+                updateTimeLeft(timeLeft, taskTime);
+                li.appendChild(timeLeft);
+
+                const completeBtn = document.createElement("button");
+                completeBtn.textContent = "Mark as Completed";
+                completeBtn.classList.add("complete-btn");
+                completeBtn.addEventListener("click", function () {
+                    li.classList.add("completed");
+                    completeBtn.textContent = "Completed";
+                    completeBtn.disabled = true;
+
+                    // Remove time and deadline details
+                    li.removeChild(deadline);
+                    li.removeChild(timeLeft);
+
+                    const congratsMessage = document.createElement("p");
+                    congratsMessage.textContent = "Hurray! You completed the task before the deadline!";
+                    congratsMessage.style.color = "#4caf50";
+                    li.appendChild(congratsMessage);
+                });
+
+                li.appendChild(completeBtn);
+
+                const deleteBtn = document.createElement("button");
+                deleteBtn.textContent = "Delete";
+                deleteBtn.classList.add("delete-btn");
+                deleteBtn.addEventListener("click", function () {
+                    taskList.removeChild(li);
+                });
+
+                li.appendChild(deleteBtn);
+                taskList.appendChild(li);
+
+                taskInput.value = "";
+                taskDescription.value = "";
+                taskDeadline.value = "";
+
+                setInterval(() => updateTimeLeft(timeLeft, taskTime), 1000);
+            } else {
+                alert("Please fill in all fields!");
+            }
+        });
+
+        function updateTimeLeft(element, deadline) {
+            const now = new Date();
+            const deadlineDate = new Date(deadline);
+            const timeDiff = deadlineDate - now;
+
+            if (timeDiff > 0) {
+                const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+                element.textContent = `Time left: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+            } else {
+                element.textContent = "Time's up!";
+            }
+        }
+
+        darkModeToggle.addEventListener("click", function () {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle("dark-mode");
+            todoContainer.classList.toggle("dark-mode");
+            darkModeToggle.textContent = isDarkMode ? "☀️" : "🌙";
+        });
+    </script>
+</body>
+</html>
