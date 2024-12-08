@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <link rel="icon" type="image/x-icon" href="image.png">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: url('Monument Valley.jpg') no-repeat center center fixed;
+            background-size: cover;
+            transition: background 0.5s ease, color 0.5s ease;
+        }
+
+        .todo-container {
+            max-width: 350px;
+            margin: auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            transform: translateY(50vh);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        input,
+        button {
+            padding: 10px;
+            margin: 5px;
+            width: 70%;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background: #fff;
+            margin: 5px;
+            padding: 10px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #333;
+        }
+
+        .done-btn,
+        .delete-btn {
+            background: #008CBA;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-left: 5px;
+        }
+
+        .delete-btn {
+            background: red;
+        }
+
+        .done-btn:hover {
+            background: #0079a8;
+        }
+
+        .delete-btn:hover {
+            background: darkred;
+        }
+
+        .task-done {
+            text-decoration: line-through;
+            color: #888;
+        }
+
+        .dark-mode {
+            background: url('images(dark-mode).jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+        }
+
+        .dark-mode .todo-container {
+            background: rgba(40, 40, 40, 0.9);
+        }
+
+        .dark-mode input,
+        .dark-mode button {
+            background: #333;
+            color: white;
+            border: 1px solid #444;
+        }
+
+        .dark-mode li {
+            background: #444;
+            color: white;
+        }
+
+        .dark-mode button:hover {
+            background: #555;
+        }
+
+        .toggle-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 8px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+            width: 40px;
+            height: 40px;
+        }
+
+        .toggle-btn:hover {
+            background: #45a049;
+        }
+
+        .quote {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .dark-mode .quote {
+            color: #ccc;
+        }
+
+        .date-time {
+            margin-bottom: 15px;
+            font-size: 16px;
+            color: #555;
+        }
+
+        .dark-mode .date-time {
+            color: #ccc;
+        }
+    </style>
+</head>
+
+<body>
+    <button class="toggle-btn" id="modeToggle">🌙</button>
+
+    <div class="todo-container">
+        <div class="date-time" id="dateTime"></div>
+        <h2>To-Do List</h2>
+        <input type="text" id="taskInput" placeholder="Enter new task">
+        <button id="addBtn">Add Task</button>
+        <ul id="taskList"></ul>
+        <div class="quote" id="quote">“Rules for happiness: something to do, someone to love, something to hope for.”
+        </div>
+    </div>
+
+    <script>
+        const addBtn = document.getElementById("addBtn");
+        const taskInput = document.getElementById("taskInput");
+        const taskList = document.getElementById("taskList");
+        const modeToggle = document.getElementById("modeToggle");
+        const body = document.body;
+        const quote = document.getElementById("quote");
+        const dateTimeDisplay = document.getElementById("dateTime");
+
+        let isDarkMode = false;
+
+        function updateDateTime() {
+            const now = new Date();
+            const options = {
+                timeZone: "Asia/Kolkata",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+                hour12: true,
+            };
+            const formatter = new Intl.DateTimeFormat("en-IN", options);
+            dateTimeDisplay.textContent = formatter.format(now);
+        }
+
+        setInterval(updateDateTime, 1000);
+
+        addBtn.addEventListener("click", function () {
+            const taskText = taskInput.value.trim();
+            if (taskText) {
+                const li = document.createElement("li");
+
+                const taskSpan = document.createElement("span");
+                taskSpan.textContent = taskText;
+
+                const doneBtn = document.createElement("button");
+                doneBtn.textContent = "Done";
+                doneBtn.classList.add("done-btn");
+                doneBtn.addEventListener("click", function () {
+                    taskSpan.classList.toggle("task-done");
+                });
+
+                const deleteBtn = document.createElement("button");
+                deleteBtn.textContent = "Delete";
+                deleteBtn.classList.add("delete-btn");
+                deleteBtn.addEventListener("click", function () {
+                    taskList.removeChild(li);
+                });
+
+                li.appendChild(taskSpan);
+                li.appendChild(doneBtn);
+                li.appendChild(deleteBtn);
+                taskList.appendChild(li);
+                taskInput.value = "";
+            } else {
+                alert("Please enter a task!");
+            }
+        });
+
+        modeToggle.addEventListener("click", function () {
+            isDarkMode = !isDarkMode;
+
+            if (isDarkMode) {
+                body.classList.add("dark-mode");
+                modeToggle.textContent = "☀️";
+            } else {
+                body.classList.remove("dark-mode");
+                modeToggle.textContent = "🌙";
+            }
+        });
+
+        updateDateTime();
+    </script>
+</body>
+
+</html>
