@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Do List</title>
+    <link rel="stylesheet" href="to do.css">
+    <style>
+        /* General styling for the list items */
+        li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        li input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        /* Styling for the delete button */
+        .delete-button {
+            margin-left: 10px;
+            color: white;
+            background-color: red;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .date-time {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <div class="container">
+        <h1>&nbsp;&nbsp;"कर्मण्येवाधिकारस्ते मा फलेषु कदाचन "</h1><br>
+        <h5>---"To work alone you have the right, and not to the fruits"</h5>
+    </div>
+    <div class="toggle-container">
+        <input type="checkbox" onclick="togglebutton()" id="toggle" class="toggle-checkbox">
+        <label for="toggle" class="toggle-label"></label>
+    </div>
+</div>
+
+<script>
+function togglebutton() {
+   var element = document.body;
+   element.classList.toggle("dark-mode");
+}
+</script>
+
+<!-- Real Date and Time Section -->
+<div class="date-time" id="currentDateTime"></div>
+
+<!-- Input Section -->
+<div class="box">
+    <form onsubmit="return false;">
+        <label for="taskInput">Enter your task<br><br></label>
+        <input type="text" id="taskInput" placeholder="Type something here..."><br><br>
+        
+        <label for="deadlineDate">Enter Deadline<br><br></label>
+        <input type="date" id="deadlineDate">
+        <input type="time" id="deadlineTime">
+    </form>
+    <div class="container">
+        <button type="button" onclick="addToList()" class="bottom-left-button">Add</button>
+    </div>
+</div>
+
+<!-- Task Display Section -->
+<div class="listbox">
+    <h3>To Do List:</h3>
+    <ul id="taskList" role="list"></ul>
+</div>
+
+<script>
+// Function to update the current date and time
+function updateDateTime() {
+    const dateTimeElement = document.getElementById("currentDateTime");
+    const now = new Date();
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const date = now.toLocaleDateString('en-US', options);
+    const time = now.toLocaleTimeString();
+    dateTimeElement.textContent = `${date}, ${time}`;
+}
+
+// Update the date and time every second
+setInterval(updateDateTime, 1000);
+
+// Function to add a task to the list
+function addToList() {
+    const taskInput = document.getElementById("taskInput").value;
+    const deadlineDate = document.getElementById("deadlineDate").value;
+    const deadlineTime = document.getElementById("deadlineTime").value;
+    const taskList = document.getElementById("taskList");
+
+    if (taskInput === "" || deadlineDate === "" || deadlineTime === "") {
+        alert("Please fill in all fields!");
+        return;
+    }
+
+    // Check for duplicates (excluding "Delete" button text)
+    const existingTasks = Array.from(taskList.children).map(item => 
+        item.firstChild.nextSibling.textContent
+    );
+    if (existingTasks.includes(`${taskInput} - Due: ${deadlineDate} ${deadlineTime}`)) {
+        alert("This task already exists!");
+        return;
+    }
+
+    const listItem = document.createElement("li");
+    listItem.setAttribute("role", "listitem");
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.style.marginRight = "10px";
+
+    checkbox.addEventListener("change", function () {
+        if (checkbox.checked) {
+            listItem.style.textDecoration = "line-through";
+            listItem.style.color = "gray";
+        } else {
+            listItem.style.textDecoration = "none";
+            listItem.style.color = "black";
+        }
+    });
+
+    const taskContent = document.createTextNode(`${taskInput} - Due: ${deadlineDate} ${deadlineTime}`);
+
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "Delete";
+    deleteButton.classList.add("delete-button");
+
+    deleteButton.addEventListener("click", function () {
+        taskList.removeChild(listItem);
+    });
+
+    listItem.appendChild(checkbox);
+    listItem.appendChild(taskContent);
+    listItem.appendChild(deleteButton);
+
+    taskList.appendChild(listItem);
+
+    document.getElementById("taskInput").value = "";
+    document.getElementById("deadlineDate").value = "";
+    document.getElementById("deadlineTime").value = "";
+}
+</script>
+</body>
+</html>
