@@ -1,0 +1,191 @@
+body {
+    padding: 25px;
+    background-image: url("light\ mode.png");
+    color: rgba(66, 19, 97, 0.961);
+    font-size: 25px;
+    height: 100vh;
+
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    margin: 0;
+    margin: 0; 
+  }
+
+h1 {
+     
+    font-size: 2rem;
+    margin: 0;
+    text-align: center;
+}
+  .dark-mode {
+    background-image: url("dark mode.jpg");
+    color: white;
+    background-position: center center;
+    height: 100vh;
+    background-size: cover;
+    background-repeat: no-repeat;
+    margin: 0; 
+  }
+ .container{
+    display: flex;
+    justify-content: center; 
+    text-align: center; 
+    height: 50vh;
+}
+.header {
+    display: flex;              
+    justify-content: space-between; 
+    align-items: center;     
+    padding: 20px;           
+    margin: 0;
+}
+ .toggle-container {
+    background-color: transparent;
+    position:absolute;
+    top:20px;
+    right:40px;
+}
+
+.toggle-checkbox {
+    display: none;
+}
+
+.toggle-label {
+    width: 70px;
+    height: 35px;
+    background-color: #daf5f1;
+    border-radius: 300px;
+    border-color: rgb(145, 96, 24);
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+
+.toggle-label::after {
+    content: '';
+    width: 30px;
+    height: 30px;
+    background-color: rgb(99, 23, 138);
+    border-radius: 50%;
+    position: absolute;
+    top: o.5px;
+    left: 1.5px;
+    transition: transform 0.3s ease;
+}
+
+.toggle-checkbox:checked + .toggle-label {
+    background-color: #571c7e;
+}
+
+.toggle-checkbox:checked + .toggle-label::after {
+    transform: translateX(25px);
+}
+input[type="text"] {
+    width:100%;
+    padding: 5px;
+    border: 2px solid #382dd4;
+    border-radius: 5px;
+    font-size: 1 rem;
+}
+input[type="text"]:focus {
+    border-color: #571c7e; 
+    outline: none;
+}
+input[type="time"] {
+    font-size: 1rem;
+    padding: 5px;
+    border: 2px solid #382dd4;
+    border-radius: 5px;
+}
+
+input[type="time"]:focus {
+    border-color: #571c7e;
+    outline: none;
+}
+input[type="date"] {
+    font-size: 1rem;
+    padding: 5px;
+    border: 2px solid #382dd4;
+    border-radius: 5px;
+}
+
+input[type="date"]:focus {
+    border-color: #571c7e;
+    outline: none;
+}
+.bottom-left-button {
+    width: 100%;  
+    padding: 20px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 1px;
+    cursor: pointer;
+    margin-top: 1px; 
+}
+
+.bottom-left-button:hover {
+    background-color: #2980b9;
+}
+.box {
+    position:absolute;
+    top:200px;
+    left:150px;
+    width: 300px;
+    min-height: 350px;
+    height: 200px;  
+    border: 2px solid #382dd4;
+    padding: 20px;  
+    margin: auto;
+    background-color: transparent;
+    display: flex;
+    flex-direction: column;  
+    gap: 15px;  
+    align-items: center; 
+}
+.listbox {
+    position:absolute;
+    top:200px;
+    left:750px;
+    width: 300px;
+    margin: 20px auto;
+    padding: 10px;
+    border: 2px solid #382dd4;
+    background-color:transparent;
+    border-radius: 5px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.listbox li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f1f1f1;
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.delete-btn {
+    background: #e74c3c;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.delete-btn:hover {
+    background: #c0392b;
+}
+.date-time{
+    size: 10px;
+    column-span: all;
+    background-color: #e3eeedb1;
+    position:absolute;
+    top: 180px;
+    left:180px;
+}
